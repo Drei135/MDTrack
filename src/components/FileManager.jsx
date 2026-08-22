@@ -99,6 +99,13 @@ export default function FileManager({ user, profile, refreshProfile }) {
     }
     window.addEventListener('online', goOnline);
     window.addEventListener('offline', goOffline);
+    // Fired by AppSuite when the service worker wakes up for a
+    // `periodicsync` event (see public/sw-extra.js) - refresh the cached
+    // file list in the background.
+    function onPeriodicRefresh() {
+      refresh();
+    }
+    window.addEventListener('filevault:refresh-cached-data', onPeriodicRefresh);
     const detach = attachAutoSync((result) => {
       if (result.succeeded > 0) {
         setToast(`Synced ${result.succeeded} offline change${result.succeeded === 1 ? '' : 's'}`);
@@ -112,6 +119,7 @@ export default function FileManager({ user, profile, refreshProfile }) {
     return () => {
       window.removeEventListener('online', goOnline);
       window.removeEventListener('offline', goOffline);
+      window.removeEventListener('filevault:refresh-cached-data', onPeriodicRefresh);
       detach();
     };
   }, []);

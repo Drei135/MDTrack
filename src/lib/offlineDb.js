@@ -1,5 +1,6 @@
 import Dexie from 'dexie';
 import { supabase } from './supabaseClient';
+import { requestBackgroundSync } from './backgroundSync';
 
 /**
  * offlineDb.js
@@ -70,6 +71,11 @@ export async function queueAction(type, payload) {
     attempts: 0
   };
   const id = await db.syncQueue.add(record);
+  // Best-effort: ask the SW to replay this (and anything else pending) once
+  // connectivity is back, even if this tab gets closed in the meantime. The
+  // `online` listener in attachAutoSync still covers browsers without
+  // Background Sync support.
+  requestBackgroundSync();
   return { id, ...record };
 }
 

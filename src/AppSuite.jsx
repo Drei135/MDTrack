@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Loader2, RefreshCw, LogOut, HardDrive, ListTodo, ClipboardList, Users } from 'lucide-react';
 import { useAuth } from './lib/useAuth';
 import { supabase } from './lib/supabaseClient';
+import { syncPendingActions } from './lib/offlineDb';
+import { attachBackgroundSyncListener, requestPeriodicSync } from './lib/backgroundSync';
 import LoginPage from './components/LoginPage';
 import FileManager from './components/FileManager';
 import TasksManager from './components/TasksManager';
@@ -58,6 +60,26 @@ export default function AppSuite() {
     window.addEventListener('filevault:sw-update-available', handler);
     return () => window.removeEventListener('filevault:sw-update-available', handler);
   }, []);
+
+  // Respond to the service worker waking up for a `sync` or `periodicsync`
+  // event (see public/sw-extra.js): replay the offline queue, or refresh the
+  // cached file list, without the user having to do anything.
+  useEffect(() => {
+    const detach = attachBackgroundSyncListener({
+      onSyncPendingChanges: () => syncPendingActions(),
+      onRefreshCachedData: () => {
+        refreshProfile();
+        window.dispatchEvent(new CustomEvent('filevault:refresh-cached-data'));
+      }
+    });
+    return detach;
+  }, [refreshProfile]);
+
+  // Best-effort periodic background sync registration, once per session
+  // after login (no-op on browsers/OSes that don't support it).
+  useEffect(() => {
+    if (user) requestPeriodicSync();
+  }, [user]);
 
   if (loading) {
     return (

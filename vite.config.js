@@ -21,6 +21,10 @@ export default defineConfig({
       // from ever being generated again.
       manifest: false,
       workbox: {
+        // sw-extra.js adds push, notificationclick, sync, and periodicsync
+        // event listeners that Workbox's own generator doesn't provide -
+        // see that file for details.
+        importScripts: ['/sw-extra.js'],
         // App-shell precache: JS/CSS/HTML/fonts/icons produced by the build.
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2,json}'],
         // Never let the SW intercept Supabase Auth/API/Storage/Realtime calls -

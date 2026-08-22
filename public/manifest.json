@@ -6,16 +6,81 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "tabbed", "standalone"],
   "orientation": "portrait-primary",
   "theme_color": "#0f172a",
   "background_color": "#0f172a",
+  "categories": ["productivity", "utilities", "business"],
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
+  "screenshots": [
+    { "src": "/screenshots/wide-files.png", "sizes": "1280x720", "type": "image/png", "form_factor": "wide", "label": "Browse and manage your files from the desktop view" },
+    { "src": "/screenshots/wide-tasks.png", "sizes": "1280x720", "type": "image/png", "form_factor": "wide", "label": "Track team tasks on a kanban board" },
+    { "src": "/screenshots/narrow-files.png", "sizes": "750x1334", "type": "image/png", "form_factor": "narrow", "label": "Access your files on the go" },
+    { "src": "/screenshots/narrow-tasks.png", "sizes": "750x1334", "type": "image/png", "form_factor": "narrow", "label": "Manage tasks from your phone" }
+  ],
   "shortcuts": [
     { "name": "Upload File", "url": "/?action=upload", "description": "Upload a new file" },
     { "name": "New Folder", "url": "/?action=new-folder", "description": "Create a new folder" }
+  ],
+  "file_handlers": [
+    {
+      "action": "/?action=open-file",
+      "accept": {
+        "application/pdf": [".pdf"],
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+        "text/markdown": [".md"],
+        "text/plain": [".txt"],
+        "image/png": [".png"],
+        "image/jpeg": [".jpg", ".jpeg"]
+      }
+    }
+  ],
+  "launch_handler": {
+    "client_mode": ["focus-existing", "auto"]
+  },
+  "protocol_handlers": [
+    { "protocol": "web+filevault", "url": "/?share=%s" }
+  ],
+  "share_target": {
+    "action": "/?action=share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        { "name": "files", "accept": ["application/pdf", "image/*", ".docx", ".txt", ".md"] }
+      ]
+    }
+  },
+  "note_taking": {
+    "new_note_url": "/?action=new-note"
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "widgets": [
+    {
+      "name": "FileVault Tasks",
+      "short_name": "Tasks",
+      "description": "See your top pending tasks without opening the app",
+      "tag": "tasks-widget",
+      "ms_ac_template": "/widgets/tasks-widget-template.json",
+      "data": "/widgets/tasks-data.json",
+      "type": "application/json",
+      "screenshots": [
+        { "src": "/screenshots/widget-tasks.png", "sizes": "600x400", "label": "Tasks widget preview" }
+      ],
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }],
+      "auth": false,
+      "update": 900
+    }
   ]
 }

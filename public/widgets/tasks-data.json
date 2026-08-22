@@ -1,0 +1,7 @@
+{
+  "tasks": [
+    { "title": "Finalize vendor list", "dueDate": "Aug 25", "completed": false },
+    { "title": "Prepare monthly budget", "dueDate": "Aug 28", "completed": false },
+    { "title": "Draft client proposal", "dueDate": "Aug 23", "completed": false }
+  ]
+}
